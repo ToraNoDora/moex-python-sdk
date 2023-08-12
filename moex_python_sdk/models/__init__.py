@@ -119,8 +119,8 @@ connection_with_proxy(
      session=session,
      proxy=MoexProxy(
           proxies=Proxy(
-               http="http://nsproxy1.rosbank.rus.socgen:8080",
-               https="https://nsproxy1.rosbank.rus.socgen:8080",
+               http="",
+               https="",
           ),
           user=User(
                username="",
