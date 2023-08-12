@@ -1,4 +1,4 @@
-# variables 
+# variables
 SDK := moex_python_sdk
 
 # for api docs
@@ -17,9 +17,8 @@ test:
 build:
 	poetry build
 
-	
-.PHONY: doc
-doc:
+
+.PHONY: docs
+docs:
 	poetry run sphinx-apidoc -M -o ${MODULES} ${SDK}
 	poetry run sphinx-build -M html ${SOURCE} ${BUILD_DIR}
-	

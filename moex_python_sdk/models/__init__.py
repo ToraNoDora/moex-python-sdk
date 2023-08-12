@@ -22,7 +22,7 @@ class RespData(BaseModel):
 def new_resp_data(data: Dict) -> RespData:
      if not data:
           return None
-     
+
      return RespData(
           metadata=data["metadata"],
           columns=data["columns"],
@@ -59,7 +59,7 @@ def new_date_params(lang: str = "ru", date: str = "today") -> DateParams:
 
 class MonthParams(LangParams):
     year: Optional[str]
-    month: Optional[str] 
+    month: Optional[str]
 
 def new_date_params(lang: str = "ru", year: str = None, month: str = None) -> MonthParams:
     return MonthParams(
@@ -67,6 +67,7 @@ def new_date_params(lang: str = "ru", year: str = None, month: str = None) -> Mo
         year=year,
         month=month,
     )
+
 
 # proxy
 class Proxy(BaseModel):
@@ -93,11 +94,6 @@ def new_moex_proxy(username: str, password: str, http: str = None, https: str = 
           ),
      )
 
-
-# proxies = {
-#         "http": "http://nsproxy1.rosbank.rus.socgen:8080",
-#         #   "https": "https://nsproxy1.rosbank.rus.socgen:8080"
-#         }
 
 from requests import Session
 from requests.auth import HTTPProxyAuth
