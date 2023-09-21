@@ -10,7 +10,8 @@ little-moex - небольшой проект для получения акту
 ```toml
 [[tool.poetry.source]]
 name = "your-package-registry"
-url = url-package-registry"
+url = "url-package-registry"
+
 ```
 
 После нужно добавить данные учетной записи `your-package-registry` в `poetry`:
