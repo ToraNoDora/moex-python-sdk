@@ -1,33 +1,29 @@
-from typing import Optional, Dict
+from typing import Optional
 from pydantic import BaseModel
 
-from moex_python_sdk.models import LangParams, RespData
+from moex_python_sdk.models import BaseParams, LangParams, RespData
 
 
-# rms object
-class RmsObjectParams(BaseModel):
-    date: Optional[str] = "today" # !(only limits.dates)
+# object
+class RmsObjects(BaseModel):
+    objects: RespData
+
+class RmsObjectParams(BaseParams):
+    date: Optional[str] = "today"
     # Параметр работает, если не указан код инструмента.
     # С кодом инструмента используйте параметр &from= и &till=
     from_at: Optional[str] = "1970-01-01" # Для параметра должен быть указан код инструмента.
     till: Optional[str] = "1970-01-01" # Для параметра должен быть указан код инструмента.
     start: Optional[str] = "0"
     limit: Optional[str] = "1000"
-    lang: Optional[str] # !(for limits)
-
-    def as_dict(self):
-        params = self.dict(exclude_none=True)
-        params["from"] = params["from_at"]
-        params.pop("from_at", None)
-
-        return {k:v for k, v in params.items() if v is not None}
+    lang: Optional[str]
 
 def new_rms_object_params(
-        date: str = "today", 
-        from_at: str = None, 
-        till: str = None, 
-        start: str = "0", 
-        limit: str = "1000", 
+        date: str = "today",
+        from_at: str = "1970-01-01",
+        till: str = None,
+        start: str = "0",
+        limit: str = "1000",
         lang: str = None,
     ) -> RmsObjectParams:
     return RmsObjectParams(
@@ -38,21 +34,20 @@ def new_rms_object_params(
         limit=limit,
         lang=lang,
     )
-    
+
 class RmsObject(BaseModel):
     limits: RespData
     limits_cursor: RespData
     limits_dates: RespData
 
 class RmsObjectStat(BaseModel):
-    staticparams: RespData
-    staticparams_cursor: RespData
-    staticparams_dates: RespData
+    static_params: RespData
+    static_params_cursor: RespData
 
-class RmsObjectKeyterm(BaseModel):
-    static_params_keyterm: RespData
-    static_paramskeyterm_cursor: RespData
-    static_paramskeyterm_dates: RespData
+class RmsObjectMarketRates(BaseModel):
+    market_rates: RespData
+    market_rates_dates: RespData
+    market_rates_cursor: RespData
 
 class RmsObjectPercentFutures(BaseModel):
     percent_futures: RespData
@@ -61,36 +56,33 @@ class RmsObjectPercentFutures(BaseModel):
 
 
 # irr
-class IrrParams(BaseModel):
+class IrrParams(BaseParams):
     date: str = "today"
     q: str # Поиск по инструментам
-    group: Optional[str] 
+    group: Optional[str]
     # Фильтр по полю "Множество" ("group").
     # Можно использовать можно через запятую указывать несколько значений (не более 5 элементов).
     # Поиск по подстроке невозможен.
-    indicator: Optional[str] 
+    indicator: Optional[str]
     # Фильтр по полю "Индикатор множества" ("indicator").
     # Можно использовать можно через запятую указывать несколько значений (не более 5 элементов).
     # Поиск по подстроке невозможен.
-    currencyid: Optional[str] 
+    currencyid: Optional[str]
     # Фильтр по полю "Валюта риска" ("currencyid)".
     # Можно использовать можно через запятую указывать несколько значений (не более 5 элементов). Поиск по подстроке невозможен.
-    instrument: Optional[str] 
+    instrument: Optional[str]
     # Фильтр по полю "Торговый код бумаги" ("instrument)".
     # Можно использовать можно через запятую указывать несколько значений (не более 5 элементов). Поиск по подстроке невозможен.
-    isin: Optional[str] 
+    isin: Optional[str]
     # Фильтр по полю "ISIN" ("ISIN)".
     # Можно использовать можно через запятую указывать несколько значений (не более 5 элементов). Поиск по подстроке невозможен.
 
-    def as_dict(self):
-        return self.dict(exclude_none=True)
-    
 def new_irr_params(
-        date: str = "today", 
-        q: str = None, 
-        group: str = None, 
-        indicator: str = None, currencyid: str = None, 
-        instrument: str = None, 
+        date: str = "today",
+        q: str = None,
+        group: str = None,
+        indicator: str = None, currencyid: str = None,
+        instrument: str = None,
         isin: str = None,
     ) -> IrrParams:
     return IrrParams(

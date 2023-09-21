@@ -11,8 +11,7 @@ class RespInfo(Resp):
     ...
 
 def new_resp_info(url: str, content: Any):
-    return RespInfo(url=url, content=content).dict(exclude_none=True)
-    # return RespInfo(url=url, content=content)
+    return RespInfo(url=url, content=content).model_dump(exclude_none=True)
 
 class RespData(BaseModel):
     metadata: Dict
@@ -20,7 +19,7 @@ class RespData(BaseModel):
     data: List
 
 def new_resp_data(data: Dict) -> RespData:
-     if not data:
+     if len(data) == 0:
           return None
 
      return RespData(
@@ -32,16 +31,28 @@ def new_resp_data(data: Dict) -> RespData:
 
 # Base params
 class BaseParams(BaseModel):
-#     lang: str = "ru" # ru || en
+    def as_dict(self, check: bool = False):
+        params = self.model_dump(exclude_none=True)
+        if check:
+            return self._check(params)
 
-    def as_dict(self):
-        return self.dict(exclude=True)
+        return params
 
+    def _check(self, params: Dict):
+        if "from_at" in params.keys():
+            params["from"] = params["from_at"]
+            params.pop("from_at", None)
+
+        if "iss_reverse" in params.keys():
+            params["iss.reverse"] = params["iss_reverse"]
+            params.pop("iss_reverse", None)
+
+        return {k:v for k, v in params.items() if v is not None}
 
 class LangParams(BaseParams):
-     lang: str = "ru" # ru || en
+    lang: str = "ru" # ru || en
 
-def new_lang_params(lang: str = "ru", date: str = "today") -> LangParams:
+def new_lang_params(lang: str = "ru") -> LangParams:
     return LangParams(
         lang=lang,
     )
@@ -93,39 +104,4 @@ def new_moex_proxy(username: str, password: str, http: str = None, https: str = 
                password=password,
           ),
      )
-
-
-from requests import Session
-from requests.auth import HTTPProxyAuth
-
-
-def connection_with_proxy(session: Session, proxy: MoexProxy):
-        print(proxy)
-
-        auth = HTTPProxyAuth(proxy.user.username, proxy.user.password)
-        session.proxies = proxy.proxies.dict()
-        session.auth = auth        # Set authorization parameters globally
-
-        # ext_ip = session.get('http://iss.moex.com/iss', proxies=proxy.proxies.dict(), verify=False)
-        # ext_ip = session.get("http://10.36.41.178:5556/iss", verify=False)
-        # # print("is_redirect: ", ext_ip.next.url)
-        # print(ext_ip.url)
-        # print(ext_ip.text)
-
-
-session = Session()
-
-connection_with_proxy(
-     session=session,
-     proxy=MoexProxy(
-          proxies=Proxy(
-               http="",
-               https="",
-          ),
-          user=User(
-               username="",
-               password="",
-          ),
-     ))
-
 

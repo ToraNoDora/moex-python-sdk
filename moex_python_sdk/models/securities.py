@@ -45,8 +45,8 @@ class Securities(BaseModel):
 class SecurityParams(LangParams):
     start: Optional[int] = 0
 
-def new_security_params(lang: str = "ru", start:  int = None):
-    return SecuritiesParams(
+def new_security_params(lang: str = "ru", start:  int = 0):
+    return SecurityParams(
         lang=lang,
         start=start,
     )
@@ -74,7 +74,7 @@ class SecurityIndices(BaseModel):
 class SecurityAggregatesParams(LangParams):
     date: str= "last"
 
-def new_security_indices_params(lang: str = "ru", date: str= "0"):
+def new_security_aggregates_params(lang: str = "ru", date: str= "0"):
     return SecurityAggregatesParams(
         lang=lang,
         date=date,

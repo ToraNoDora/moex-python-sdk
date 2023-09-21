@@ -5,34 +5,31 @@ from moex_python_sdk.models import new_resp_data
 from moex_python_sdk.models.turnovers import TurnoversParams, Turnovers, TurnoversColumnsParams, TurnoversColumns
 
 
+@resp
 class TurnoverApi:
     def __init__(self, api: BaseApi):
         self.api = api
         self.endpoint = "/turnovers"
 
-    @resp
     def get_turnovers(self, params: TurnoversParams, format: str = "json"):
         """Получить сводные обороты по рынкам. Например: https://iss.moex.com/iss/turnovers.xml."""
 
         r = self.api.get(
-            f"{self.endpoint}.{format}", 
+            f"{self.endpoint}.{format}",
             params=params.as_dict(),
         )
-        
-        return r.url, Turnovers(
-            turnovers=new_resp_data(r["turnovers"]),
-            turnoversprevdate=new_resp_data(r["turnoversprevdate"])
+
+        return r["url"], Turnovers(
+            turnovers=new_resp_data(r["data"]["turnovers"]),
+            turnovers_prev_date=new_resp_data(r["data"]["turnoversprevdate"])
         )
 
-    @resp
     def get_turnovers_columns(self, params: TurnoversColumnsParams, format: str = "json"):
         """Получить описание полей для запросов оборотов по рынку/торговой системе. Например: https://iss.moex.com/iss/engines/stock/turnovers/columns.xml"""
 
         r = self.api.get(
-            f"{self.endpoint}/columns.{format}", 
+            f"{self.endpoint}/columns.{format}",
             params=params.as_dict(),
         )
-        
-        return r.url, TurnoversColumns(turnovers=new_resp_data(r["turnovers"]))
-    
-    
+
+        return r["url"], TurnoversColumns(turnovers=new_resp_data(r["data"]["turnovers"]))

@@ -1,9 +1,7 @@
 from time import time
 from functools import wraps
 
-import pandas as pd
-
-from moex_python_sdk.models import Resp, RespData, new_resp_info
+from moex_python_sdk.models import new_resp_info
 
 
 def time_it(f):
@@ -20,33 +18,36 @@ def time_it(f):
 
     return decorator
 
-# import pandas as pd
 
-# my_dict = {'Computer':1500,'Monitor':300,'Printer':150,'Desk':250}
-# df = pd.DataFrame(list(my_dict.items()),columns = ['Products','Prices'])
-
-# print (df)
-# print (type(df))
-
-def resp(f):
-    @wraps(f)
+def responce(method):
+    @wraps(method)
     def decorator(*args, **kwargs):
         """return model.Resp"""
-        url, content = f(*args, **kwargs)
+        url, content = method(*args, **kwargs)
 
         return new_resp_info(url=url, content=content)
-    
-    return decorator
-
-
-
-def return_df(f) -> pd.DataFrame:
-    @wraps(f)
-    def decorator(*args, **kwargs):
-        data = f(*args, **kwargs)
-        df = pd.DataFrame(data["data"], columns=data["columns"])
-
-        return df
 
     return decorator
+
+def resp(cls):
+    class NewCls:
+        def __init__(self, *args, **kwargs):
+            self._obj = cls(*args, **kwargs)
+
+        def __getattribute__(self, s):
+            try:
+                x = super().__getattribute__(s)
+            except AttributeError:
+                pass
+            else:
+                return x
+
+            attr = self._obj.__getattribute__(s)
+
+            if isinstance(attr, type(self.__init__)):
+                return responce(attr)
+            else:
+                return attr
+
+    return NewCls
 

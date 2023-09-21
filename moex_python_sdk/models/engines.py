@@ -1,47 +1,27 @@
 from typing import Optional
 from pydantic import BaseModel
 
-from moex_python_sdk.models import LangParams, RespData
+from moex_python_sdk.models import BaseParams, LangParams, RespData
 
-
-# engines
-class EnginesParams(LangParams):
-    ...
-    
-def new_curves_params(lang: Optional[str] = "ru") -> EnginesParams:
-    return EnginesParams(
-        lang=lang,
-    )
 
 class Engines(BaseModel):
     engines: RespData
 
 
-class Engine(Engines):
+class Engine(BaseModel):
+    engine: RespData
     time_table: RespData
     daily_table: RespData
 
 
 # candles
-class CandlesParams(BaseModel):
+class CandlesParams(BaseParams):
     start: Optional[int] = 0
-    till: Optional[str] = "2037-12-31" 
+    till: Optional[str] = "2037-12-31"
     from_at: Optional[str]
     interval: Optional[str] = "10"
     iss_reverse: Optional[str] = "false"
-    
-    def as_dict(self):
-        params = self.dict(exclude_none=True)
-        if params["from_at"]:
-            params["from"] = params["from_at"]
-            params.pop("from_at", None)
 
-        if params["iss_reverse"]:
-            params["iss.reverse"] = params["iss_reverse"]
-            params.pop("iss_reverse", None)
-
-        return {k:v for k, v in params.items() if v is not None}
-    
 def new_candles_params(
         start: Optional[int] = 0,
         till: Optional[str] = "2037-12-31" ,
@@ -70,7 +50,7 @@ class Candleborders(BaseModel):
 class Boards(BaseModel):
     boards: RespData
 
-class Boards(Boards):
+class Market(Boards):
     board_groups: RespData
     securities: RespData
     market_data: RespData
@@ -82,7 +62,7 @@ class Boards(Boards):
     trades_yields: RespData
     history_yields: RespData
     secstats: RespData
-    
+
 class Board(BaseModel):
     board: RespData
 
@@ -94,15 +74,15 @@ class BoardsSecuritiesParams(LangParams):
     index: Optional[str]
     security_collection: Optional[str]
     previous_session: Optional[str] = "0"
-    securities: Optional[str] # https://iss.moex.com/iss/engines/stock/markets/shares/securities?securities=GAZP,AFLT,LKOH
+    securities: Optional[str]
     first: Optional[str] = "0"
     sort_column: Optional[str]
     sort_order: Optional[str] = "asc"
     sectypes: Optional[str]
-    leaders: Optional[str] = "0" # !(for marketdata || marketdata_yields) 
-    nearest: Optional[str] = "0" # !(for marketdata || marketdata_yields) 
-    seqnum: Optional[str] = "0" # !(for marketdata || marketdata_yields) 
-    
+    leaders: Optional[str] = "0"
+    nearest: Optional[str] = "0"
+    seqnum: Optional[str] = "0"
+
 def new_board_securities_params(
         lang: Optional[str] = "ru",
         primary_board: Optional[str] = None,
@@ -146,20 +126,17 @@ class Securities(BoardsSecuritiesBase):
 
 
 # board trades
-class TradesParams(BaseModel):
+class TradesParams(BaseParams):
     tradeno: Optional[str]
     limit: Optional[str] = "5000"
     reversed: Optional[str] = "0"
     recno: Optional[str] = "0"
     previous_session: Optional[str] = "0"
-    securities: Optional[str] # securities=GAZP,AFLT,LKOH
+    securities: Optional[str]
     next_trade: Optional[str] = "0"
     start: Optional[int] = 0
     yielddatetype: Optional[str]
 
-    def as_dict(self):
-        return self.dict(exclude_none=True)
-    
 def new_board_trades_params(
         tradeno: Optional[str] = None,
         limit: Optional[str] = "5000",
@@ -184,7 +161,7 @@ def new_board_trades_params(
     )
 
 class TradesBase(BaseModel):
-    trades: RespData # Справочник полей таблицы сделок торговой сессии рынка
+    trades: RespData
 
 class Trades(TradesBase):
     data_version: RespData
@@ -192,14 +169,11 @@ class Trades(TradesBase):
 
 
 # orderbook
-class OrderbookParams(BaseModel):
+class OrderbookParams(BaseParams):
     start: Optional[int] = 0
     seqnum: Optional[int] = None
-    securities: Optional[str] # securities=GAZP,AFLT,LKOH
-    
-    def as_dict(self):
-        return self.dict(exclude_none=True)
-    
+    securities: Optional[str]
+
 def new_orderbook_params(
         start: Optional[int] = 0,
         seqnum: Optional[int] = None,
@@ -214,27 +188,6 @@ def new_orderbook_params(
 class Orderbook(BaseModel):
     orderbook: RespData
 
-
-# board orderbook
-# class BoardSecurityOrderbookParams(BaseModel):
-#     start: Optional[int] = 0
-#     seqnum: Optional[int] = None # !(for trades_yields)
-#     securities: Optional[str] # https://iss.moex.com/iss/engines/stock/markets/shares/securities?securities=GAZP,AFLT,LKOH
-    
-#     def as_dict(self):
-#         return self.dict(exclude_none=True)
-    
-# def new_board_orderbook_params(
-#         start: Optional[int] = 0,
-#         seqnum: Optional[int] = None,
-#         securities: Optional[str] = None,
-#     ) -> BoardSecurityOrderbookParams:
-#     return BoardSecurityOrderbookParams(
-#         start=start,
-#         seqnum=seqnum,
-#         securities=securities,
-#     )
-
 class SecurityOrderbook(Orderbook):
     data_version: RespData
 
@@ -242,7 +195,7 @@ class SecurityOrderbook(Orderbook):
 # board candleborders
 class BoardCandlebordersParams(LangParams):
     ...
-    
+
 def new_board_candleborders_params(lang: str = "ru") -> BoardCandlebordersParams:
     return BoardCandlebordersParams(
         lang=lang,
@@ -254,10 +207,10 @@ class BoardCandleborders(Candleborders):
 
 # boardgroups
 class Boardgroups(BaseModel):
-    boardgroups: RespData
+    board_groups: RespData
 
 class Boardgroup(BaseModel):
-    boardgroup: RespData
+    board_group: RespData
 
 class BoardgroupSecurity(BaseModel):
     orderbook: RespData
@@ -279,7 +232,7 @@ class MarketOrderbook(Orderbook):
 class TurnoversParams(LangParams):
     is_tonight_session: Optional[str] = "0"
     date: Optional[str] = "today"
-    
+
 def new_turnovers_params(
         lang: str = "ru",
         is_tonight_session: str = "0",
@@ -290,12 +243,13 @@ def new_turnovers_params(
         is_tonight_session=is_tonight_session,
         date=date,
     )
+
 class Turnovers(BaseModel):
     turnovers: RespData
 
 
 # secstats
-class SecstatsParams(BaseModel):
+class SecstatsParams(BaseParams):
     tradingsession: Optional[str]
     # Показать данные только за необходимую сессию
     #  1 - Основная
@@ -306,9 +260,6 @@ class SecstatsParams(BaseModel):
     # Отфильтровать выдачу по режиму торгов.
     # Например: boardid=TQBR,SMAL (не более 10 режимов).
 
-    def as_dict(self):
-        return self.dict(exclude_none=True)
-    
 def new_secstats_params(
         tradingsession: str = None,
         securities: str = None,
@@ -328,7 +279,7 @@ class Secstats(BaseModel):
 class ZcycParams(LangParams):
     date: Optional[str] = "today"
     show: Optional[str]
-    
+
 def new_zcyc_params(
         lang: str = "ru",
         date: str = "today",
@@ -351,14 +302,11 @@ class Zcyc(BaseModel):
 
 
 # market zcyc
-class MarketZcycParams(BaseModel):
+class MarketZcycParams(BaseParams):
     lang: Optional[str] = "ru"
     from_at: Optional[str] = "2000-01-01"
     start: Optional[int] = 0
 
-    def as_dict(self):
-        return self.dict(exclude_none=True)
-    
 def new_market_zcyc_params(
         lang: str = "ru",
         from_at: str = "2000-01-01",
@@ -374,4 +322,3 @@ class MarketZcyc(BaseModel):
     parameters: RespData
     values: RespData
 
-    

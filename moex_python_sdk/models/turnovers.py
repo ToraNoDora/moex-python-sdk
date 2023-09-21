@@ -7,7 +7,7 @@ from moex_python_sdk.models import LangParams, RespData
 class TurnoversParams(LangParams):
     is_tonight_session: str = "0"
     date: str = "today"
-    
+
 def new_turnovers_params(
     lang: str = "ru",
     is_tonight_session: str = "0",
@@ -21,9 +21,9 @@ def new_turnovers_params(
 
 class Turnovers(BaseModel):
     turnovers: RespData
-    turnoversprevdate: RespData # TODO
-    
-    
+    turnovers_prev_date: RespData
+
+
 # turnovers columns
 class TurnoversColumnsParams(LangParams):
     ...

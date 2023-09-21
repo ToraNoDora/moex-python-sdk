@@ -7,9 +7,9 @@ from moex_python_sdk.models import LangParams, RespData
 # security groups
 class SecurityGroupsParams(LangParams):
     hide_inactive: Optional[str] = "0"
-    securitygroups: Optional[str] = "" # ?
+    securitygroups: Optional[str] = ""
     trade_engine: Optional[str] = ""
-    
+
 def new_security_groups_params(
     lang: str = "ru",
     hide_inactive: str = None,
@@ -25,7 +25,7 @@ def new_security_groups_params(
 
 class SecurityGroups(BaseModel):
     security_groups : RespData
-    
+
 
 # groups collections
 class SecurityGroupsCollectionsParams(LangParams):
@@ -39,7 +39,6 @@ def new_security_groups_collections_params(lang: str = "ru"):
 class SecurityGroupsCollections(BaseModel):
     collections: RespData
 
-
 class SecurityGroupsCollection(BaseModel):
     collections: RespData
     boardgroups: RespData
@@ -48,9 +47,6 @@ class SecurityGroupsCollection(BaseModel):
 # groups collection securities
 class SecurityGroupsCollectionSecuritiesParams(SecurityGroupsCollectionsParams):
     start: str = "0"
-
-    def as_dict(self):
-        return self.dict(exclude_none=True)
 
 def new_security_groups_collections_securities_params(lang: str = "ru", start: str = "0"):
     return SecurityGroupsCollectionSecuritiesParams(
@@ -61,5 +57,4 @@ def new_security_groups_collections_securities_params(lang: str = "ru", start: s
 class SecurityGroupsCollectionSecurities(BaseModel):
     securities: RespData
     securities_cursor: RespData
-
 

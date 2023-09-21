@@ -3,7 +3,7 @@ SDK := moex_python_sdk
 
 # for api docs
 SOURCE := ./docs/source/
-MODULES := ./docs/source/modules/
+MODULES := ./docs/source/_modules/
 BUILD_DIR := ./docs/build/
 
 
@@ -12,11 +12,14 @@ init:
 
 .PHONY: test
 test:
-	poetry run pytest -s
+	poetry run pytest -n 8
 
 build:
 	poetry build
 
+
+new.docs:
+	poetry run sphinx-quickstart ${SOURCE}
 
 .PHONY: docs
 docs:

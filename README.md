@@ -1,17 +1,9 @@
 # Moex manager API for Python
 
-moex-python-sdk - это проект для получения актуальных данных с Московской биржи (https://iss.moex.com).
+little-moex - небольшой проект для получения актуальных данных с Московской биржи (https://iss.moex.com).
 
 
-# Установка через pip
-
-```bash
-pip install moex-python-sdk
-```
-
-# Как использовать SDK (poetry)
-
-В самом начале нужно выполнить установку `poetry`. Так же на компьютере должна быть в наличии утилита `make` (в UNIX-системах, как правило идет в комплекте). Для установки в Windows можно воспользоваться менеджером пакетом `chokolatey`.
+## Как использовать SDK (poetry)
 
 В своем проекте, в файл `pyproject.toml`, необходимо добавить указание, откуда собирать зависимости:
 
@@ -19,49 +11,47 @@ pip install moex-python-sdk
 [[tool.poetry.source]]
 name = "your-package-registry"
 url = url-package-registry"
-
 ```
 
-После данной процедуры, нужно добавить данные учетной записи `your-package-registry` в `poetry`:
+После нужно добавить данные учетной записи `your-package-registry` в `poetry`:
 
 ```bash
-poetry config http-basic.your-package-registry <username> <password>
-
+$ poetry config http-basic.your-package-registry <username> <password>
 ```
 
 Далее устанавливаем пакет в проект, как обычную зависимость:
 
 ```bash
-poetry add moex-python-sdk --source your-package-registry
-
+$ poetry add little-moex --source your-package-registry
 ```
 
 
-# Как помочь
+## Как помочь
 
 Установи [poetry]: https://python-poetry.org/docs/#installation
 
-Выполни:
-
-    $ make init
-
+```bash
+$ make init
+```
 чтобы установить зависимости. После этого можно приступать к работе, предварительно выполнив прогон тестов:
 
-    $ make test
+```bash
+$ make test
+```
 
-
-# Пример использования
+## Пример
 
 ```py
 from moex_python_sdk import Moex
+from moex_python_sdk.models.index import new_index_params
+
 
 moex_api = Moex()
+index_api = moex_api.index()
 
-# если необходим прокси при подключение 
-moex_api.connection_with_proxy()
+params = new_index_params()
+index = index_api.get_index(params)["content"]
 
-current_ = moex_api.api(). #
-current_ = moex_api. #
-
+print(index["markets"])
 ```
 

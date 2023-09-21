@@ -4,10 +4,10 @@ from moex_python_sdk.models import RespData
 
 
 # boards
-class Boards(BaseModel):
+class BaseBoards(BaseModel):
     boards: RespData
 
-class Boards(Boards):
+class Boards(BaseBoards):
     board_groups: RespData
     securities: RespData
     market_data: RespData
@@ -19,6 +19,6 @@ class Boards(Boards):
     trades_yields: RespData
     history_yields: RespData
     secstats: RespData
-    
+
 class Board(BaseModel):
     board: RespData

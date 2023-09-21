@@ -1,11 +1,11 @@
 from typing import Optional
 from pydantic import BaseModel
 
-from moex_python_sdk.models import RespData
+from moex_python_sdk.models import BaseParams, RespData
 
 
 # analytical
-class AnalyticalBase(BaseModel):
+class AnalyticalBase(BaseParams):
     date: Optional[str]
 
 
@@ -13,10 +13,7 @@ class AnalyticalBase(BaseModel):
 class CurvesParams(AnalyticalBase):
     time: Optional[str]
 
-    def as_dict(self):
-        return self.dict(exclude_none=True)
-    
-def new_curves_params(date: Optional[str] = None, time: Optional[str] = None) -> CurvesParams:
+def new_curves_securities_params(date: Optional[str] = None, time: Optional[str] = None) -> CurvesParams:
     return CurvesParams(
         date=date,
         time=time,
@@ -26,17 +23,10 @@ class Curves(BaseModel):
     curves: RespData
 
 
-class CurvesSecurityParams(BaseModel):
+class CurvesSecurityParams(BaseParams):
     till: Optional[str]
     from_at: Optional[str]
 
-    def as_dict(self):
-        params = self.dict(exclude_none=True)
-        params["from"] = params["from_at"]
-        params.pop("from_at", None)
-
-        return {k:v for k, v in params.items() if v is not None}
-    
 def new_curves_security_params(till: str = None, from_at: str = None) -> CurvesSecurityParams:
     return CurvesSecurityParams(
         till=till,
@@ -49,10 +39,7 @@ class FutoiParams(AnalyticalBase):
     latest: Optional[str] # Последний срез за день ('1'-включить)
     table_type: Optional[str]
 
-    def as_dict(self):
-        return self.dict(exclude_none=True)
-    
-def new_futoi_params(
+def new_futoi_securities_params(
         date: Optional[str] = None,
         latest: Optional[str] = None,
         table_type: Optional[str] = None,
@@ -68,18 +55,11 @@ class Futoi(BaseModel):
     futoi_dates: RespData
 
 
-class FutoiSecurityParams(BaseModel):
+class FutoiSecurityParams(BaseParams):
     from_at: Optional[str]
     till: Optional[str]
     latest: Optional[str]
 
-    def as_dict(self):
-        params = self.dict(exclude_none=True)
-        params["from"] = params["from_at"]
-        params.pop("from_at", None)
-
-        return {k:v for k, v in params.items() if v is not None}
-    
 def new_futoi_security_params(
         from_at: Optional[str] = None,
         till: Optional[str] = None,
@@ -96,10 +76,7 @@ def new_futoi_security_params(
 class Netflow2Params(AnalyticalBase):
     ...
 
-    def as_dict(self):
-        return self.dict(exclude_none=True)
-    
-def new_netflow2_params(date: Optional[str] = None) -> Netflow2Params:
+def new_netflow2_securities_params(date: Optional[str] = None) -> Netflow2Params:
     return Netflow2Params(
         date=date,
     )
@@ -108,17 +85,10 @@ class Netflow2(BaseModel):
     netflow2: RespData
 
 
-class Netflow2SecurityParams(BaseModel):
+class Netflow2SecurityParams(BaseParams):
     from_at: Optional[str]
     till: Optional[str]
 
-    def as_dict(self):
-        params = self.dict(exclude_none=True)
-        params["from"] = params["from_at"]
-        params.pop("from_at", None)
-
-        return {k:v for k, v in params.items() if v is not None}
-    
 def new_netflow2_security_params(from_at: Optional[str] = None, till: Optional[str] = None) -> Netflow2SecurityParams:
     return Netflow2SecurityParams(
         from_at=from_at,
